@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #myCanvas {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: -1;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="myCanvas"></canvas>>
+    <script>
+      // 获取canvas元素
+      var canvas = document.getElementById('myCanvas');
+      var context = canvas.getContext('2d');
+
+      // 设置canvas宽高
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      // 监听窗口大小，改变画布大小
+      window.addEventListener('resize', resizeCanvas, false);
+      resizeCanvas();
+      clearCanvas();
+      // 清空画布
+      function clearCanvas() {
+        context.fillStyle = '#000000';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        context.fillStyle = '#f08';
+        context.font = 'italic 80px 宋体';
+        context.textAlign = 'center';
+        context.fillText('远 远 生 日 快 乐! ', canvas.width / 2, canvas.height / 2);
+      }
+
+      // 鼠标点击事件
+      function mouseDownHandler(e) {
+        // 获取鼠标位置
+        var x = e?.clientX || Math.random() * 1500;
+        var y = e?.clientY || Math.random() * 900;
+
+        // 生成烟花
+        fire(x, y);
+        clearCanvas();
+      }
+
+      var rid;
+      function fire(x, y) {
+        // 生成烟花随机点
+        createFireworks(x, y);
+
+        function tick() {
+          // 在源画布下面画一个黑色矩形
+          context.globalCompositeOperation = 'destination-out';
+          context.fillStyle = 'rgba(0,0,0,' + 10 / 100 + ')';
+          context.fillRect(0, 0, canvas.width, canvas.height);
+          //   同时显示源图像和目标图像
+          context.globalCompositeOperation = 'lighter';
+
+          //   画烟花
+          drawFireworks();
+          //   设置烟花动画
+          rid = requestAnimationFrame(tick);
+        }
+        // 清楚上一次动画
+        cancelAnimationFrame(rid);
+        tick();
+      }
+      var particles = [];
+
+      //  生成烟花随机点100个
+      function createFireworks(sx, sy) {
+        // particles = []
+        if (particles.length > 1000) {
+          particles.splice(0, 100);
+        }
+        var hue = Math.floor(Math.random() * 255) + 1; // 0-255
+        var hueVariance = 30;
+        var count = 100;
+
+        for (var i = 0; i < count; i++) {
+          var p = {};
+          // 随机角度0-359
+          var angle = Math.floor(Math.random() * 360);
+          // 生成随机弧度
+          p.radians = (angle * Math.PI) / 180;
+          // 烟花中心点
+          p.x = sx;
+          p.y = sy;
+
+          p.speed = Math.random() * 6 + 0.4; // 0-5.3
+          p.radius = p.speed;
+          p.size = Math.floor(Math.random() * 2) + 1;
+          p.hue =
+            Math.floor(
+              Math.random() * (hue + hueVariance - (hue - hueVariance))
+            ) +
+            (hue - hueVariance);
+          p.brightness = Math.floor(Math.random() * 31) + 50;
+          p.alpha = (Math.floor(Math.random() * 61) + 40) / 100;
+          particles.push(p);
+        }
+      }
+      function drawFireworks() {
+        // 清除画布
+        clearCanvas();
+
+        for (var i = 0; i < particles.length; i++) {
+          var p = particles[i];
+          var vx = Math.cos(p.radians) * p.radius;
+          var vy = Math.sin(p.radians) * p.radius + 0.4;
+          p.x += vx;
+          p.y += vy;
+          p.radius *= 1 - p.speed / 100;
+          p.alpha -= 0.005;
+          context.beginPath();
+          context.arc(p.x, p.y, p.size, 0, Math.PI * 2, false);
+          context.closePath();
+          context.fillStyle =
+            'hsla(' + p.hue + ', 100%, ' + p.brightness + '%, ' + p.alpha + ')';
+          context.fill();
+        }
+      }
+      document.addEventListener('mousedown', mouseDownHandler, false);
+      setInterval(mouseDownHandler, 1000);
+    </script>
+  </body>
+</html>
