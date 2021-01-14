@@ -103,11 +103,11 @@
           p.y = sy;
 
           p.speed = Math.random() * 6 + 0.4; // 0-5.3
-          p.radius = p.speed;
-          p.size = Math.floor(Math.random() * 2) + 1;
+          p.radius = p.speed;// 烟花大半径
+          p.size = Math.floor(Math.random() * 2) + 1;// 烟花半径
           p.hue =
             Math.floor(
-              Math.random() * (hue + hueVariance - (hue - hueVariance))
+              Math.random() * (2*hueVariance)
             ) +
             (hue - hueVariance);
           p.brightness = Math.floor(Math.random() * 31) + 50;
@@ -123,10 +123,12 @@
           var p = particles[i];
           var vx = Math.cos(p.radians) * p.radius;
           var vy = Math.sin(p.radians) * p.radius + 0.4;
+          // 坠落感
           p.x += vx;
           p.y += vy;
           p.radius *= 1 - p.speed / 100;
           p.alpha -= 0.005;
+
           context.beginPath();
           context.arc(p.x, p.y, p.size, 0, Math.PI * 2, false);
           context.closePath();
@@ -136,7 +138,7 @@
         }
       }
       document.addEventListener('mousedown', mouseDownHandler, false);
-      setInterval(mouseDownHandler, 1000);
+      setInterval(mouseDownHandler, 800);
     </script>
   </body>
 </html>
