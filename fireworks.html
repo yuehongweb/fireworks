@@ -36,16 +36,22 @@
         context.fillRect(0, 0, canvas.width, canvas.height);
 
         context.fillStyle = '#f08';
-        context.font = 'italic 80px 宋体';
+        context.font = `italic ${canvas.width/10}px 宋体`;
         context.textAlign = 'center';
-        context.fillText('远 远 生 日 快 乐! ', canvas.width / 2, canvas.height / 2);
+        context.fillText(
+          '远 远 生 日 快 乐! ',
+          canvas.width / 2,
+          canvas.height / 2
+        );
       }
 
       // 鼠标点击事件
       function mouseDownHandler(e) {
         // 获取鼠标位置
-        var x = e?.clientX || Math.random() * 1500;
-        var y = e?.clientY || Math.random() * 900;
+        var x = e ? e.clientX : Math.random()*(window.innerWidth);
+        // var x = e?.clientX || Math.random() * 1500;
+        var y = e ? e.clientY : Math.random() * (window.innerHeight);
+        // var y = e?.clientY || Math.random() * 900;
 
         // 生成烟花
         fire(x, y);
